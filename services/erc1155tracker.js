@@ -9,6 +9,8 @@ const trackedAddresses = []
 const trackedContracts = []
 
 const apiEndPoint = process.env.API_ENDPOINT
+const PROMENADE_API_SECRET = process.env.PROMENADE_API_SECRET;
+
 const provider = new ethers.providers.JsonRpcProvider(
   process.env.NETWORK_RPC,
   parseInt(process.env.NETWORK_CHAINID),
@@ -19,13 +21,20 @@ const callAPI = async (endpoint, data) => {
   await axios({
     method: 'post',
     url: apiEndPoint + endpoint,
+    headers: {
+      'x-promenade-api-secret': PROMENADE_API_SECRET 
+    },
     data,
   })
 }
 
 const trackSingleNewERC1155 = async () => {
   try {
-    let response = await axios.get(`${apiEndPoint}getTrackable1155Contracts`)
+    let response = await axios.get(`${apiEndPoint}getTrackable1155Contracts`, {
+      headers: {
+        'x-promenade-api-secret': PROMENADE_API_SECRET 
+      }
+    })
     if (response) {
       let data = response.data
       if (data.status == 'success') {
